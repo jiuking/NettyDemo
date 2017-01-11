@@ -52,9 +52,11 @@ public class TimeClientHandler implements Runnable{
                     try{
                         handleInput(key);
                     }catch (Exception e){
-                        key.cancel();
-                        if(key.channel() != null){
-                            key.channel().close();
+                        if (key != null) {
+                            key.cancel();
+                            if (key.channel() != null) {
+                                key.channel().close();
+                            }
                         }
                     }
                 }
@@ -75,11 +77,13 @@ public class TimeClientHandler implements Runnable{
     private void handleInput(SelectionKey key) throws IOException{
         if(key.isValid()){
             SocketChannel sc = (SocketChannel) key.channel();
-            if (sc.finishConnect()){
-                sc.register(selector,SelectionKey.OP_READ);
-                doWrite(sc);
-            }else
-                System.exit(1);
+            if (key.isConnectable()) {
+                if (sc.finishConnect()) {
+                    sc.register(selector, SelectionKey.OP_READ);
+                    doWrite(sc);
+                } else
+                    System.exit(1);
+            }
             if (key.isReadable()){
                 ByteBuffer readBuffer = ByteBuffer.allocate(1024);
                 int readBytes = sc.read(readBuffer);
