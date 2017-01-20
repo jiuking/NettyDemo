@@ -1,12 +1,8 @@
 package com.netty.websocket.handler;
 
-import com.netty.websocket.msg.DyMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.CharsetUtil;
@@ -16,7 +12,6 @@ import java.util.Date;
 
 import static io.netty.handler.codec.http.HttpUtil.isKeepAlive;
 import static io.netty.handler.codec.http.HttpUtil.setContentLength;
-import static java.lang.Thread.sleep;
 
 /**
  * Created by Bravowhale on 2017/1/18.
@@ -57,10 +52,10 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
             buf.release();
             setContentLength(res,res.content().readableBytes());
         }
-        ChannelFuture f = ctx.channel().writeAndFlush(res);
-        if (!isKeepAlive(req) || res.status().code() != 200){
-            f.addListener(ChannelFutureListener.CLOSE);
-        }
+//        ChannelFuture f = ctx.channel().writeAndFlush(res);
+//        if (!isKeepAlive(req) || res.status().code() != 200){
+//            f.addListener(ChannelFutureListener.CLOSE);
+//        }
     }
 
     private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
@@ -76,28 +71,34 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
             throw new UnsupportedOperationException(String .format("%s frame types not supported",frame.getClass().getName() ));
         }
         String  request = ((TextWebSocketFrame) frame).text();
-
-        DyMessage.addAudience(ctx.channel(),request);
-        /*ctx.channel().write(new TextWebSocketFrame(request
+//        ctx.channel().write(new TextWebSocketFrame(request
+//                + ",111欢迎使用Netty WebSocket服务，现在时刻1111："
+//                + new Date().toString()));
+//        DyMessage.addAudience(ctx.channel(),request);
+        Channel channel = ctx.channel();
+        channel.write(new TextWebSocketFrame(request
                 + ",欢迎使用Netty WebSocket服务，现在时刻："
                 + new Date().toString()));
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println(LocalTime.now());
-                try {
-                    sleep(10000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        System.out.println(channel);
+//        Thread t = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                System.out.println(LocalTime.now());
 
-                    ctx.channel().write(new TextWebSocketFrame(request
-                            + ",111欢迎使用Netty WebSocket服务，现在时刻1111："
-                            + new Date().toString()));
-                System.out.println(LocalTime.now());
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        });
-        t.start();*/
+//                System.out.println(channel);
+            channel.write(new TextWebSocketFrame(request
+                    + ",111欢迎使用Netty WebSocket服务，现在时刻1111："
+                    + new Date().toString()));
+            System.out.println(LocalTime.now());
+
+//            }
+//        });
+//        t.start();
     }
 
     @Override

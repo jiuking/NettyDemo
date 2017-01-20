@@ -20,7 +20,7 @@ public class DyMessage implements Runnable{
     private static String request;
     static public void addAudience(Channel ch,String request){
         audiences.add(ch);
-        request = request;
+        DyMessage.request = request;
     }
 
     static public void removeAudience(Channel ch){
@@ -43,6 +43,7 @@ public class DyMessage implements Runnable{
             String msg = getMessage();
             radiate(msg);
             try{Thread.sleep(1000); }catch(Exception ex){}
+
         }
     }
 

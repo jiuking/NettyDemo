@@ -11,8 +11,6 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
-import java.util.Optional;
-
 /**
  * Created by Bravowhale on 2017/1/18.
  */
@@ -51,8 +49,8 @@ public class WebSocketServer {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        Thread t = new Thread(new DyMessage(),"DynMessage");
-        t.start();
+//        Thread t = new Thread(new DyMessage(),"DynMessage");
+//        t.start();
         new WebSocketServer().run(8080);
     }
 }
